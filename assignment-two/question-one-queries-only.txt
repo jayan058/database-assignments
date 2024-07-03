@@ -1,122 +1,213 @@
 --Queries
-
 -- 1. Find all students enrolled in the Math course
-SELECT student_id, student_name
-FROM Students
-WHERE student_id IN (
-    SELECT student_id
-    FROM Enrollments
-    WHERE course_id IN (
-        SELECT course_id
-        FROM Courses
-        WHERE course_name = 'Math'
-    )
-);
-
+SELECT
+    student_id,
+    student_name
+FROM
+    Students
+WHERE
+    student_id IN (
+        SELECT
+            student_id
+        FROM
+            Enrollments
+        WHERE
+            course_id IN (
+                SELECT
+                    course_id
+                FROM
+                    Courses
+                WHERE
+                    course_name = 'Math'
+            )
+    );
 
 -- 2. List all courses taken by students named Bob
-SELECT course_id, course_name
-FROM Courses
-WHERE course_id IN (
-    SELECT course_id
-    FROM Enrollments
-    WHERE student_id IN (
-        SELECT student_id
-        FROM Students
-        WHERE student_name = 'Bob'
-    )
-);
+SELECT
+    course_id,
+    course_name
+FROM
+    Courses
+WHERE
+    course_id IN (
+        SELECT
+            course_id
+        FROM
+            Enrollments
+        WHERE
+            student_id IN (
+                SELECT
+                    student_id
+                FROM
+                    Students
+                WHERE
+                    student_name = 'Bob'
+            )
+    );
 
 -- 3. Find the names of students who are enrolled in more than one course
-SELECT student_id, student_name
-FROM Students
-WHERE student_id IN (
-    SELECT student_id
-    FROM Enrollments
-    GROUP BY student_id
-    HAVING COUNT(*) > 1
-);
+SELECT
+    student_id,
+    student_name
+FROM
+    Students
+WHERE
+    student_id IN (
+        SELECT
+            student_id
+        FROM
+            Enrollments
+        GROUP BY
+            student_id
+        HAVING
+            COUNT(*) > 1
+    );
 
 -- 4. List all students who are in Grade A (grade_id = 1)
-SELECT student_id, student_name
-FROM Students
-WHERE student_grade_id = 1;
+SELECT
+    student_id,
+    student_name
+FROM
+    Students
+WHERE
+    student_grade_id = 1;
 
 -- 5. Find the number of students enrolled in each course
-SELECT course_id, course_name,
-       (SELECT COUNT(*)
-        FROM Enrollments
-        WHERE course_id = Courses.course_id) AS num_students
-FROM Courses;
+SELECT
+    course_id,
+    course_name,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            Enrollments
+        WHERE
+            course_id = Courses.course_id
+    ) AS num_students
+FROM
+    Courses;
 
 -- 6. Retrieve the course with the highest number of enrollments
-SELECT course_id, course_name,
-       (SELECT COUNT(*)
-        FROM Enrollments
-        WHERE course_id = Courses.course_id) AS num_enrollments
-FROM Courses
-WHERE (
-    SELECT COUNT(*)
-    FROM Enrollments
-    WHERE course_id = Courses.course_id
-) = (
-    SELECT MAX(enroll_count)
-    FROM (
-        SELECT COUNT(*) AS enroll_count
-        FROM Enrollments
-        GROUP BY course_id
-    ) AS max_counts
-);
+SELECT
+    course_id,
+    course_name,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            Enrollments
+        WHERE
+            course_id = Courses.course_id
+    ) AS num_enrollments
+FROM
+    Courses
+WHERE
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            Enrollments
+        WHERE
+            course_id = Courses.course_id
+    ) = (
+        SELECT
+            MAX(enroll_count)
+        FROM
+            (
+                SELECT
+                    COUNT(*) AS enroll_count
+                FROM
+                    Enrollments
+                GROUP BY
+                    course_id
+            ) AS max_counts
+    );
 
 -- 7. List students who are enrolled in all available courses
-SELECT student_id, student_name
-FROM Students
-WHERE NOT EXISTS (
-    SELECT course_id
-    FROM Courses
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM Enrollments
-        WHERE student_id = Students.student_id AND course_id = Courses.course_id
-    )
-);
+SELECT
+    student_id,
+    student_name
+FROM
+    Students
+WHERE
+    NOT EXISTS (
+        SELECT
+            course_id
+        FROM
+            Courses
+        WHERE
+            NOT EXISTS (
+                SELECT
+                    1
+                FROM
+                    Enrollments
+                WHERE
+                    student_id = Students.student_id
+                    AND course_id = Courses.course_id
+            )
+    );
 
 -- 8. Find students who are not enrolled in any courses
-SELECT student_id, student_name
-FROM Students
-WHERE student_id NOT IN (
-    SELECT student_id
-    FROM Enrollments
-);
+SELECT
+    student_id,
+    student_name
+FROM
+    Students
+WHERE
+    student_id NOT IN (
+        SELECT
+            student_id
+        FROM
+            Enrollments
+    );
 
 -- 9. Retrieve the average age of students enrolled in the Science course
-SELECT AVG(student_age) AS average_age
-FROM Students
-WHERE student_id IN (
-    SELECT student_id
-    FROM Enrollments
-    WHERE course_id IN (
-        SELECT course_id
-        FROM Courses
-        WHERE course_name = 'Science'
-    )
-);
-
+SELECT
+    AVG(student_age) AS average_age
+FROM
+    Students
+WHERE
+    student_id IN (
+        SELECT
+            student_id
+        FROM
+            Enrollments
+        WHERE
+            course_id IN (
+                SELECT
+                    course_id
+                FROM
+                    Courses
+                WHERE
+                    course_name = 'Science'
+            )
+    );
 
 -- 10. Find the grade of students enrolled in the History course
-SELECT grade_name
-FROM Grades
-WHERE grade_id IN (
-    SELECT student_grade_id
-    FROM Students
-    WHERE student_id IN (
-        SELECT student_id
-        FROM Enrollments
-        WHERE course_id IN (
-            SELECT course_id
-            FROM Courses
-            WHERE course_name = 'History'
-        )
-    )
-);
-
+SELECT
+    grade_name
+FROM
+    Grades
+WHERE
+    grade_id IN (
+        SELECT
+            student_grade_id
+        FROM
+            Students
+        WHERE
+            student_id IN (
+                SELECT
+                    student_id
+                FROM
+                    Enrollments
+                WHERE
+                    course_id IN (
+                        SELECT
+                            course_id
+                        FROM
+                            Courses
+                        WHERE
+                            course_name = 'History'
+                    )
+            )
+    );
