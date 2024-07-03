@@ -1,73 +1,103 @@
-CREATE TABLE Products (
-    product_id INT PRIMARY KEY,
-    product_name VARCHAR(100) NOT NULL,
-    category VARCHAR(100),
-    price DECIMAL(10, 2)
-);
+CREATE TABLE
+    Products (
+        product_id INT PRIMARY KEY,
+        product_name VARCHAR(100) NOT NULL,
+        category VARCHAR(100),
+        price DECIMAL(10, 2)
+    );
 
-CREATE TABLE Orders (
-    order_id INT PRIMARY KEY,
-    customer_name VARCHAR(100) NOT NULL,
-    product_id INT,
-    quantity INT,
-    order_date DATE,
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
-);
+CREATE TABLE
+    Orders (
+        order_id INT PRIMARY KEY,
+        customer_name VARCHAR(100) NOT NULL,
+        product_id INT,
+        quantity INT,
+        order_date DATE,
+        FOREIGN KEY (product_id) REFERENCES Products (product_id)
+    );
 
 --Crud Operations
 --1. Create
 -- Inserting data into Products table
-INSERT INTO Products (product_id, product_name, category, price)
-VALUES (1, 'Laptop', 'Electronics', 999.99),
-       (2, 'Smartphone', 'Electronics', 499.99),
-       (3, 'Desk', 'Furniture', 199.99);
+INSERT INTO
+    Products (product_id, product_name, category, price)
+VALUES
+    (1, 'Laptop', 'Electronics', 999.99),
+    (2, 'Smartphone', 'Electronics', 499.99),
+    (3, 'Desk', 'Furniture', 199.99);
 
 -- Inserting data into Orders table
-INSERT INTO Orders (order_id, customer_name, product_id, quantity, order_date)
-VALUES (1, 'John Doe', 1, 1, '2024-07-01'),
-       (2, 'Jane Smith', 2, 2, '2024-07-01'),
-       (3, 'Alice Johnson', 1, 1, '2024-07-02');
-      
+INSERT INTO
+    Orders (
+        order_id,
+        customer_name,
+        product_id,
+        quantity,
+        order_date
+    )
+VALUES
+    (1, 'John Doe', 1, 1, '2024-07-01'),
+    (2, 'Jane Smith', 2, 2, '2024-07-01'),
+    (3, 'Alice Johnson', 1, 1, '2024-07-02');
+
 --2. Read      
 -- Selecting all records from Products table
-SELECT * FROM Products;
+SELECT
+    *
+FROM
+    Products;
 
 -- Selecting all records from Orders table
-SELECT * FROM Orders;
+SELECT
+    *
+FROM
+    Orders;
 
 --3. Update
 -- Updating a record in Products table
 UPDATE Products
-SET price = 899.99
-WHERE product_id = 1;
+SET
+    price = 899.99
+WHERE
+    product_id = 1;
 
 -- Updating a record in Orders table
 UPDATE Orders
-SET quantity = 3
-WHERE order_id = 2;
+SET
+    quantity = 3
+WHERE
+    order_id = 2;
 
 --4. Delete
 -- Deleting a record from Products table
 DELETE FROM Products
-WHERE product_id = 3;
+WHERE
+    product_id = 3;
 
 -- Deleting a record from Orders table
 DELETE FROM Orders
-WHERE order_id = 1;
-
+WHERE
+    order_id = 1;
 
 --Queries
 --Calculate the Total Quantity Ordered for Each Product Category in the Orders Table
-SELECT p.category, SUM(o.quantity) AS total_quantity
-FROM Orders o
-JOIN Products p ON o.product_id = p.product_id
-GROUP BY p.category;
+SELECT
+    p.category,
+    SUM(o.quantity) AS total_quantity
+FROM
+    Orders o
+    JOIN Products p ON o.product_id = p.product_id
+GROUP BY
+    p.category;
 
 --Find Categories Where the Total Number of Products Ordered is Greater Than 5
-SELECT p.category, SUM(o.quantity) AS total_quantity
-FROM Orders o
-JOIN Products p ON o.product_id = p.product_id
-GROUP BY p.category
-HAVING SUM(o.quantity) > 5;
-
-
+SELECT
+    p.category,
+    SUM(o.quantity) AS total_quantity
+FROM
+    Orders o
+    JOIN Products p ON o.product_id = p.product_id
+GROUP BY
+    p.category
+HAVING
+    SUM(o.quantity) > 5;
