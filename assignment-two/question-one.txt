@@ -54,8 +54,18 @@ SELECT course_id, course_name,
         FROM Enrollments
         WHERE course_id = Courses.course_id) AS num_enrollments
 FROM Courses
-ORDER BY num_enrollments DESC
-LIMIT 1;
+WHERE (
+    SELECT COUNT(*)
+    FROM Enrollments
+    WHERE course_id = Courses.course_id
+) = (
+    SELECT MAX(enroll_count)
+    FROM (
+        SELECT COUNT(*) AS enroll_count
+        FROM Enrollments
+        GROUP BY course_id
+    ) AS max_counts
+);
 
 -- 7. List students who are enrolled in all available courses
 SELECT student_id, student_name
