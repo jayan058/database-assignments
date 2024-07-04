@@ -1,0 +1,13 @@
+-- Using window functions
+-- 1. ROW_NUMBER(): List all students along with a row number based on their enrollment date in ascending order
+SELECT
+    s.student_id,
+    s.student_name,
+    e.enrollment_date,
+    ROW_NUMBER() OVER (
+        ORDER BY
+            e.enrollment_date ASC
+    ) AS row_number
+FROM
+    Enrollments e
+    JOIN Students s ON e.student_id = s.student_id;
