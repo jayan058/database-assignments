@@ -1,5 +1,5 @@
 # Assignment 2
-About JOINS in database
+About Subqueries in database
 
 
 ## Question 1
