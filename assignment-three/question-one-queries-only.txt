@@ -74,62 +74,62 @@ VALUES
 
 -- 1. Inner Join: Retrieve the list of students and their enrolled courses
 SELECT
-    STU_TBL.STUDENT_ID,
-    STU_TBL.STUDENT_NAME,
-    CRS_TBL.COURSE_NAME
+    s.student_id AS student_id,
+    s.student_name AS student_name,
+    c.course_name AS course_name
 FROM
-    STUDENTS STU_TBL
-    INNER JOIN ENROLLMENTS ENR_TBL ON STU_TBL.STUDENT_ID = ENR_TBL.STUDENT_ID
-    INNER JOIN COURSES CRS_TBL ON ENR_TBL.COURSE_ID = CRS_TBL.COURSE_ID;
+    students s
+    INNER JOIN enrollments e ON s.student_id = e.student_id
+    INNER JOIN courses c ON e.course_id = c.course_id;
 
 -- 2. Left Join: List all students and their enrolled courses, including those who haven't enrolled in any course
 SELECT
-    STU_TBL.STUDENT_ID,
-    STU_TBL.STUDENT_NAME,
-    CRS_TBL.COURSE_NAME
+    s.student_id AS student_id,
+    s.student_name AS student_name,
+    c.course_name AS course_name
 FROM
-    STUDENTS STU_TBL
-    LEFT JOIN ENROLLMENTS ENR_TBL ON STU_TBL.STUDENT_ID = ENR_TBL.STUDENT_ID
-    LEFT JOIN COURSES CRS_TBL ON ENR_TBL.COURSE_ID = CRS_TBL.COURSE_ID;
+    students s
+    LEFT JOIN enrollments e ON s.student_id = e.student_id
+    LEFT JOIN courses c ON e.course_id = c.course_id;
 
 -- 3. Right Join: Display all courses and the students enrolled in each course, including courses with no enrolled students
 SELECT
-    CRS_TBL.COURSE_ID,
-    CRS_TBL.COURSE_NAME,
-    STU_TBL.STUDENT_NAME
+    c.course_id AS course_id,
+    c.course_name AS course_name,
+    s.student_name AS student_name
 FROM
-    COURSES CRS_TBL
-    RIGHT JOIN ENROLLMENTS ENR_TBL ON CRS_TBL.COURSE_ID = ENR_TBL.COURSE_ID
-    RIGHT JOIN STUDENTS STU_TBL ON ENR_TBL.STUDENT_ID = STU_TBL.STUDENT_ID;
+    courses c
+    RIGHT JOIN enrollments e ON c.course_id = e.course_id
+    RIGHT JOIN students s ON e.student_id = s.student_id;
 
---4. Self Join: Find pairs of students who are enrolled in at least one common course, displaying student names
+-- 4. Self Join: Find pairs of students who are enrolled in at least one common course, displaying student names
 SELECT
-    STU1.student_name AS student_name_1,
-    STU2.student_name AS student_name_2,
-    ENR1.course_id
+    s1.student_name AS student_name_1,
+    s2.student_name AS student_name_2,
+    e1.course_id AS course_id
 FROM
-    Enrollments ENR1
-    JOIN Enrollments ENR2 ON ENR1.course_id = ENR2.course_id
-    AND ENR1.student_id < ENR2.student_id
-    JOIN Students STU1 ON ENR1.student_id = STU1.student_id
-    JOIN Students STU2 ON ENR2.student_id = STU2.student_id;
+    enrollments e1
+    JOIN enrollments e2 ON e1.course_id = e2.course_id
+    AND e1.student_id < e2.student_id
+    JOIN students s1 ON e1.student_id = s1.student_id
+    JOIN students s2 ON e2.student_id = s2.student_id;
 
 -- 5. Complex Join: Retrieve students who are enrolled in 'Introduction to CS' but not in 'Data Structures'
 SELECT
-    STU_TBL.STUDENT_ID,
-    STU_TBL.STUDENT_NAME
+    s.student_id AS student_id,
+    s.student_name AS student_name
 FROM
-    STUDENTS STU_TBL
-    INNER JOIN ENROLLMENTS ENR1 ON STU_TBL.STUDENT_ID = ENR1.STUDENT_ID
-    INNER JOIN COURSES CRS1 ON ENR1.COURSE_ID = CRS1.COURSE_ID
-    AND CRS1.COURSE_NAME = 'Introduction to CS'
+    students s
+    INNER JOIN enrollments e1 ON s.student_id = e1.student_id
+    INNER JOIN courses c1 ON e1.course_id = c1.course_id
+    AND c1.course_name = 'Introduction to CS'
 WHERE
-    STU_TBL.STUDENT_ID NOT IN (
+    s.student_id NOT IN (
         SELECT
-            STU_TBL.STUDENT_ID
+            s.student_id
         FROM
-            STUDENTS STU_TBL
-            INNER JOIN ENROLLMENTS ENR2 ON STU_TBL.STUDENT_ID = ENR2.STUDENT_ID
-            INNER JOIN COURSES CRS2 ON ENR2.COURSE_ID = CRS2.COURSE_ID
-            AND CRS2.COURSE_NAME = 'Data Structures'
+            students s
+            INNER JOIN enrollments e2 ON s.student_id = e2.student_id
+            INNER JOIN courses c2 ON e2.course_id = c2.course_id
+            AND c2.course_name = 'Data Structures'
     );
