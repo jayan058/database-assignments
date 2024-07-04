@@ -1,39 +1,46 @@
 -- Using window functions
 
--- 1. ROW_NUMBER(): List all students along with a row number based on their enrollment date in ascending order
+-- 1. Using ROW_NUMBER() to list all students along with a row number based on their enrollment date in ascending order
 SELECT 
-    s.student_id,
-    s.student_name,
-    e.enrollment_date,
-    ROW_NUMBER() OVER (ORDER BY e.enrollment_date ASC) AS row_number
+    STU_TBL.student_id AS ID,
+    STU_TBL.student_name AS NAME,
+    ENR_TBL.enrollment_date AS ENR_DATE,
+    ROW_NUMBER() OVER (ORDER BY ENR_TBL.enrollment_date ASC) AS RN
 FROM 
-    Enrollments e
+    Enrollments ENR_TBL
 JOIN 
-    Students s ON e.student_id = s.student_id;
-   
-   
- --2. Using RANK():
---Question: Rank students based on the number of courses they are enrolled in, handling ties by assigning the same rank.
-select student_name, course_count,rank() over
-(order by course_count desc) as rank
-from (
-    select s.student_name,
-    COUNT(e.course_id) AS course_count
-    from Students s
-    left join Enrollments e ON s.student_id = e.student_id
-    group by s.student_name
-) as student_course_counts;
+    Students STU_TBL ON ENR_TBL.student_id = STU_TBL.student_id;
 
+-- 2. Using RANK() to rank students based on the number of courses they are enrolled in, handling ties by assigning the same rank
+SELECT 
+    NAME,
+    COUNT_COURSES,
+    RANK() OVER (ORDER BY COUNT_COURSES DESC) AS RANKING
+FROM (
+    SELECT 
+        STU_TBL.student_name AS NAME,
+        COUNT(ENR_TBL.course_id) AS COUNT_COURSES
+    FROM 
+        Students STU_TBL
+    LEFT JOIN 
+        Enrollments ENR_TBL ON STU_TBL.student_id = ENR_TBL.student_id
+    GROUP BY 
+        STU_TBL.student_name
+) AS STU_COURSE_COUNT;
 
---3. Using DENSE_RANK():
---Question: Determine the dense rank of courses based on their enrollment count across all students
-select course_name,enrollment_count,
-dense_rank() over
-(order by  enrollment_count desc) as  dense_rank
-from (
-    select c.course_name, COUNT(e.student_id)
-    AS enrollment_count
-    from Courses c
-    left join Enrollments e ON c.course_id = e.course_id
-    group by c.course_name
-) as course_enrollment_counts;  
+-- 3. Using DENSE_RANK() to determine the dense rank of courses based on their enrollment count across all students
+SELECT 
+    COURSE,
+    ENROLL_COUNT,
+    DENSE_RANK() OVER (ORDER BY ENROLL_COUNT DESC) AS DRANK
+FROM (
+    SELECT 
+        CRS_TBL.course_name AS COURSE, 
+        COUNT(ENR_TBL.student_id) AS ENROLL_COUNT
+    FROM 
+        Courses CRS_TBL
+    LEFT JOIN 
+        Enrollments ENR_TBL ON CRS_TBL.course_id = ENR_TBL.course_id
+    GROUP BY 
+        CRS_TBL.course_name
+) AS CRS_ENROLL_COUNT;
