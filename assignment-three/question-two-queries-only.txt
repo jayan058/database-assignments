@@ -1,13 +1,39 @@
 -- Using window functions
+
 -- 1. ROW_NUMBER(): List all students along with a row number based on their enrollment date in ascending order
-SELECT
+SELECT 
     s.student_id,
     s.student_name,
     e.enrollment_date,
-    ROW_NUMBER() OVER (
-        ORDER BY
-            e.enrollment_date ASC
-    ) AS row_number
-FROM
+    ROW_NUMBER() OVER (ORDER BY e.enrollment_date ASC) AS row_number
+FROM 
     Enrollments e
-    JOIN Students s ON e.student_id = s.student_id;
+JOIN 
+    Students s ON e.student_id = s.student_id;
+   
+   
+ --2. Using RANK():
+--Question: Rank students based on the number of courses they are enrolled in, handling ties by assigning the same rank.
+select student_name, course_count,rank() over
+(order by course_count desc) as rank
+from (
+    select s.student_name,
+    COUNT(e.course_id) AS course_count
+    from Students s
+    left join Enrollments e ON s.student_id = e.student_id
+    group by s.student_name
+) as student_course_counts;
+
+
+--3. Using DENSE_RANK():
+--Question: Determine the dense rank of courses based on their enrollment count across all students
+select course_name,enrollment_count,
+dense_rank() over
+(order by  enrollment_count desc) as  dense_rank
+from (
+    select c.course_name, COUNT(e.student_id)
+    AS enrollment_count
+    from Courses c
+    left join Enrollments e ON c.course_id = e.course_id
+    group by c.course_name
+) as course_enrollment_counts;  
