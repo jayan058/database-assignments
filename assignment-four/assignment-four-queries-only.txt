@@ -1,0 +1,52 @@
+-- Calculate the average salary by department for all Analysts
+WITH Analyst_Salaries AS (
+    SELECT
+        unit,
+        salary
+    FROM
+        employee_data
+    WHERE
+        designation LIKE '%Analyst%' -- Filter for all types of analysts
+)
+SELECT
+    unit,
+    AVG(salary) AS average_salary
+FROM
+    Analyst_Salaries
+GROUP BY
+    unit;
+
+-- List all employees who have used more than 10 leaves
+WITH Leave_Usage AS (
+    SELECT
+        first_name,
+        last_name,
+        leaves_used
+    FROM
+        employee_data
+    WHERE
+        leaves_used > 10 -- Filter for employees who have used more than 10 leaves
+)
+SELECT
+    *
+FROM
+    Leave_Usage;
+
+-- Create a view to show the details of all Senior Analysts
+CREATE VIEW Senior_Analysts AS
+SELECT
+    *
+FROM
+    employee_data
+WHERE
+    designation = 'Senior Analyst'; -- Filter for Senior Analysts only
+
+-- Create a materialized view to store the count of employees by department
+CREATE MATERIALIZED VIEW Employee_Count_By_Dept AS
+SELECT
+    unit,
+    COUNT(*) AS employee_count
+FROM
+    employee_data
+GROUP BY
+    unit;
