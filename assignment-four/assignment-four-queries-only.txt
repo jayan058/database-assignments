@@ -80,12 +80,19 @@ where
     first_name = 'TOMASA'
     and last_name = 'ARMEN';
 
-call update_salary ('KATHY', 'ALSOP', 80000);
+call update_salary ('TOMASA', 'ARMEN', 80000);
 
 select
-    *
+    first_name,
+    last_name,
+    salary
 from
-    employee_data ed
+    employee_data
+where
+    first_name = 'TOMASA'
+    and last_name = 'ARMEN';
+
+
     
  
 
