@@ -1,4 +1,5 @@
--- Calculate the average salary by department for all Analysts
+-- CTE's
+--1 Calculate the average salary by department for all Analysts
 WITH Analyst_Salaries AS (
     SELECT
         unit,
@@ -16,7 +17,7 @@ FROM
 GROUP BY
     unit;
 
--- List all employees who have used more than 10 leaves
+--2 List all employees who have used more than 10 leaves
 WITH Leave_Usage AS (
     SELECT
         first_name,
@@ -32,7 +33,9 @@ SELECT
 FROM
     Leave_Usage;
 
--- Create a view to show the details of all Senior Analysts
+   
+-- VIEWS   
+-- 1 Create a view to show the details of all Senior Analysts
 CREATE VIEW Senior_Analysts AS
 SELECT
     *
@@ -41,7 +44,7 @@ FROM
 WHERE
     designation = 'Senior Analyst'; -- Filter for Senior Analysts only
 
--- Create a materialized view to store the count of employees by department
+-- 2 Create a materialized view to store the count of employees by department
 CREATE MATERIALIZED VIEW Employee_Count_By_Dept AS
 SELECT
     unit,
@@ -50,3 +53,71 @@ FROM
     employee_data
 GROUP BY
     unit;
+
+--Stored Procedure
+-- 1 Create a procedure to update an employee's salary by their first name and last name.   
+create
+or replace procedure update_salary (f_name varchar, l_name varchar, new_salary int) language plpgsql as $$ begin
+update employee_data
+set
+    salary = new_salary
+where
+    first_name = first_name
+    and last_name = last_name;
+
+commit;
+
+end;
+$$;
+
+select
+    first_name,
+    last_name,
+    salary
+from
+    employee_data
+where
+    first_name = 'TOMASA'
+    and last_name = 'ARMEN';
+
+call update_salary ('KATHY', 'ALSOP', 80000);
+
+select
+    *
+from
+    employee_data ed
+    
+ 
+
+-- 2 Create a procedure to calculate the total number of leaves used across all departments.    
+create
+or replace procedure show_total_leaves_by_department () language plpgsql as $$ begin
+drop table if exists total_leaves_by_department;
+
+create table
+    total_leaves_by_department (department varchar(50), total_leaves_used int);
+
+insert into
+    total_leaves_by_department (
+        select
+            unit,
+            sum(leaves_used) as total_leaves_used
+        from
+            employee_data
+        group by
+            unit
+        order by
+            total_leaves_used desc
+    );
+
+commit;
+
+end;
+$$;
+
+call show_total_leaves_by_department ();
+
+select
+    *
+from
+    total_leaves_by_department;
