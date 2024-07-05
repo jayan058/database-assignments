@@ -7,7 +7,7 @@ WITH Analyst_Salaries AS (
     FROM
         employee_data
     WHERE
-        designation LIKE '%Analyst%' -- Filter for all types of analysts
+        designation LIKE 'Analyst%' -- Filter for all types of analysts
 )
 SELECT
     unit,
